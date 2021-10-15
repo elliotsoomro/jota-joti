@@ -6,16 +6,27 @@
       <img
         src="./assets/placeholder-4-3.png"
         alt="Video Feed"
-      >
+      />
     </div>
 
     <div class="p-3">
       <button
-        class="block w-full px-4 py-2 rounded-lg transition duration-100 ease-in-out focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:outline-none focus:ring-opacity-50 disabled:opacity-50 disabled:cursor-not-allowed text-white bg-blue-500 border border-transparent shadow-sm hover:bg-blue-600"
+        class="block w-full px-4 py-2 rounded-lg transition duration-100 ease-in-out focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:outline-none focus:ring-opacity-50 disabled:opacity-50 disabled:cursor-not-allowed text-white bg-blue-500 border border-transparent shadow-sm hover:bg-blue-600 mb-3"
         @click="publish"
       >
         Publicera
       </button>
+
+      <p>
+        <button
+          v-on:click="showCode()"
+          class="block w-full px-4 py-2 rounded-lg transition duration-100 ease-in-out focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:outline-none focus:ring-opacity-50 disabled:opacity-50 disabled:cursor-not-allowed bg-white border border-gray-300 shadow-sm hover:border-gray-400 mb-3"
+        >
+          <span v-if="!code">Visa</span><span v-else>Uppdatera</span> kod
+        </button>
+
+        <textarea v-if="code" class="w-full rounded-lg" rows="5">{{ code }}</textarea>
+      </p>
     </div>
   </div>
 </template>
@@ -58,6 +69,7 @@ export default {
   },
   data(){
     return {
+      code: null,
       options: {
         media: './assets/media',
         grid:
@@ -106,11 +118,12 @@ export default {
     }
   },
   methods: {
+    showCode () {
+      this.code = BlocklyPython.workspaceToCode(this.$refs["foo"].workspace)
+    },
     publish () {
-      const code = BlocklyPython.workspaceToCode(this.$refs["foo"].workspace)
-
       axios.post('http://localhost:4000', {
-        code
+        code: this.code
       })
       .then(function (response) {
         console.log(response)
